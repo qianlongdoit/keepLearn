@@ -18,21 +18,19 @@ class MyPromise {
 
         let resolve = (value) => {
             if (this.status === PENDING) {
-                this.status = FULFILLED;
                 this.value = value;
+                this.status = FULFILLED;
 
                 setTimeout(() => {
-                    this.onFulfilled.forEach(fn => {
-                        fn(this.value)
-                    })
-                });
+                    this.onFulfilled.forEach(fn => fn(this.value))
+                })
             }
         };
 
-        let reject = (reason) => {
-            if (this.status !== PENDING) {
-                this.status = REJECTED;
+        let reject = reason => {
+            if (this.status === PENDING) {
                 this.reason = reason;
+                this.status = REJECTED;
 
                 setTimeout(() => {
                     this.onRejected.forEach(fn => fn(this.reason))
@@ -47,100 +45,93 @@ class MyPromise {
         }
     }
 
-    then = (onFulfilled, onReject) => {
-        onFulfilled = typeof onFulfilled === "function" ? onFulfilled : value => value;
-        onReject = typeof onReject === "function" ? onFulfilled : reason => {throw reason};
+    then = (onFulFiled, onRejected) => {
+        onFulFiled = typeof onFulFiled === "function" ? onFulFiled : value => value;
+        onRejected = typeof onRejected === "function" ? onRejected : reason => {
+            throw reason
+        };
 
-
-        let promise = new MyPromise((resolve, reject) => {
-            if (this.status === FULFILLED) {
-                setTimeout(() => {
-                    try {
-                        let returnVal = onFulfilled(this.value);
-                        this.resolvePromise(promise, returnVal, resolve, reject)
-                    } catch (e) {
-                        reject(e);
-                    }
-                })
+        let res = new MyPromise((resolve, reject) => {
+            if (this.status === PENDING) {
+                this.onFulfilled.push(() => {
+                    this.handle(onFulFiled, this.value, resolve, reject);
+                    // setTimeout(() => {
+                    //     let value = onFulFiled(this.value);
+                    //     if (value instanceof MyPromise) {
+                    //         value.then(resolve, reject);
+                    //     } else {
+                    //         resolve(value);
+                    //     }
+                    // })
+                });
+                this.onRejected.push(() => {
+                    this.handle(onRejected, this.reason, resolve, reject);
+                    // setTimeout(() => {
+                    //     let value = onRejected(this.reason);
+                    //
+                    //     if (value instanceof MyPromise) {
+                    //         value.then(resolve, reject)
+                    //     } else {
+                    //         reject(this.reason);
+                    //     }
+                    // })
+                });
+            } else if (this.status === FULFILLED) {
+                this.handle(onFulFiled, this.value, resolve, reject);
+                // setTimeout(() => {
+                //     let value = onFulFiled(this.value);
+                //     if (value instanceof MyPromise) {
+                //         value.then(resolve, reject);
+                //     } else {
+                //         resolve(value);
+                //     }
+                // })
             } else if (this.status === REJECTED) {
-                setTimeout(() => {
-                    try {
-                        let returnVal = onReject(this.reason);
-                        this.resolvePromise(promise, returnVal, resolve, reject)
-                    } catch (e) {
-                        reject(e)
-                    }
-                })
-            } else if (this.status === PENDING) {
-                this.onFulfilled.push((value) => {
-                    setTimeout(() => {
-                        try {
-                            let returnVal = onFulfilled(this.value);
-                            this.resolvePromise(promise, returnVal, resolve, reject)
-                        } catch (e) {
-                            reject(e);
-                        }
-                    })
-
-                });
-                this.onRejected.push((value) => {
-                    setTimeout(() => {
-                        try {
-                            let returnVal = onReject(this.value);
-                            this.resolvePromise(promise, returnVal, resolve, reject)
-                        } catch (e) {
-                            reject(e);
-                        }
-                    })
-                });
+                this.handle(onRejected, this.reason, resolve, reject);
+                // setTimeout(() => {
+                //     let value = onRejected(this.reason);
+                //
+                //     if (value instanceof MyPromise) {
+                //         value.then(resolve, reject)
+                //     } else {
+                //         reject(this.reason);
+                //     }
+                // })
             }
         });
 
-        return promise;
+        return res;
     }
 
-    resolvePromise = (p, value, resolve, reject) => {
-        if (p === value) {
-            reject(new TypeError('Chaining circle'));
-        }
+    handle = (doResolve, value, resolve, reject) => {
+        setTimeout(() => {
+            let res = doResolve(value);
+            let finished = false;
 
-        if (value && ['object', 'function'].includes(typeof value)) {
-            let done = false;
-            try {
-                let then = value.then;
-
-                if (typeof then === "function") {
-                    then.call(value, (fulfilled) => {
-                        if (done) return;
-                        done = true;
-                        this.resolvePromise(p, fulfilled, resolve, reject);
-                    }, (failed) => {
-                        if (done) return;
-                        done = true;
-
-                        reject(failed)
-                    });
-
-
-                } else {
-                    if (done) return;
-                    done = true;
-                    resolve(value)
-                }
-
-            } catch (e) {
-                if (done) return;
-                done = true;
-                reject(e)
+            if (res instanceof MyPromise) {
+                // res.then(resolve, reject);
+                res.then(onFulfilled => {
+                    if (finished) return;
+                    finished = true;
+                    resolve(onFulfilled);
+                }, onReject => {
+                    if (finished) return;
+                    finished = true;
+                    reject(onReject);
+                })
+            } else {
+                reject(value => {
+                    if (finished) return;
+                    finished = true;
+                    reject(value)
+                });
             }
-        } else {
-            resolve(value);
-        }
+        })
     }
 }
 
 // promise-test 测试钩子
-MyPromise.deferred  = function() {
+MyPromise.deferred = function () {
     const defer = {}
     defer.promise = new MyPromise((resolve, reject) => {
         defer.resolve = resolve
@@ -149,7 +140,4 @@ MyPromise.deferred  = function() {
     return defer
 }
 
-try {
-    module.exports = MyPromise
-} catch (e) {
-}
+module.exports = MyPromise
