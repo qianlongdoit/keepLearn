@@ -39,7 +39,40 @@ setTimeout 可以拿到最新的值，而且是同步的，故后两次值为 2 
 
 ### 原生事件的setState
 
-### setTime中的setState
+### setTimeout中的setState
+无论是在合成事件还是生命周期里面使用`setTimeout`都是能拿到最新的值，
+这是因为 setState 最后会走到一个 try finally 里面去，try 里面的任务被EventLoop放到
+任务队列里面去了，finally 里面的代码会先执行，`isBatchingUpdates`变为了变成了false
+```js
+function interactiveUpdates$1(fn, a, b) {
+  if (isBatchingInteractiveUpdates) {
+    return fn(a, b);
+  }
+  // If there are any pending interactive updates, synchronously flush them.
+  // This needs to happen before we read any handlers, because the effect of
+  // the previous event may influence which handlers are called during
+  // this event.
+  if (!isBatchingUpdates && !isRendering && lowestPendingInteractiveExpirationTime !== NoWork) {
+    // Synchronously flush pending interactive updates.
+    performWork(lowestPendingInteractiveExpirationTime, false, null);
+    lowestPendingInteractiveExpirationTime = NoWork;
+  }
+  var previousIsBatchingInteractiveUpdates = isBatchingInteractiveUpdates;
+  var previousIsBatchingUpdates = isBatchingUpdates;
+  isBatchingInteractiveUpdates = true;
+  isBatchingUpdates = true;  // 把requestWork中的isBatchingUpdates标识改为true
+  try {
+    return fn(a, b);
+  } finally {
+    isBatchingInteractiveUpdates = previousIsBatchingInteractiveUpdates;
+    isBatchingUpdates = previousIsBatchingUpdates;
+    if (!isBatchingUpdates && !isRendering) {
+      performSyncWork();
+    }
+  }
+}
+```
+
 
 ### 参考
 + [React中setState是异步还是同步的](https://www.cxymsg.com/guide/setState.html#%E4%BA%94%E3%80%81setstate%E4%B8%AD%E7%9A%84%E6%89%B9%E9%87%8F%E6%9B%B4%E6%96%B0)
