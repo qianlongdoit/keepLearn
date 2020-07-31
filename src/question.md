@@ -53,8 +53,7 @@ complete —— 文档和所有子资源已完成加载。状态表示 load 事�
    性能优化
    HTTP2核心特性
    
-   React中setState是异步还是同步的？
-   React的事件合成系统
+
    redux的工作原理
    
    

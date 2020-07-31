@@ -8,3 +8,16 @@
 类似LeetCode上的最小编辑距离。
 这个算法是如何得出来的，可以参考下面这篇文章。
 [NervJS-diff 算法原理概述](https://github.com/NervJS/nerv/issues/3)
+
+```js
+/**
+* pre: [b c d e f]
+* cur: [b c h e f]
+* P  : [1 0 . 4 3]  应该被插入的位置
+* I  : {c: 0, b: 1, h: 2, f: 3, e: 4} 记录新数组的映射
+*last: 0
+* LIS:       [1 4]
+* 
+* 找出P中的 最长递增子序列 
+* */
+```

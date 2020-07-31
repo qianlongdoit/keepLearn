@@ -61,12 +61,17 @@ componentDidMount触发顺序为 C -> B -> A
 更新后立即进行调用，首次渲染时不会触发
 snapshot来自于 getSnapShotBeforeUpdate 的返回值
 
-### componentWillUpdate(nextProps, nextState)
+### (不建议)componentWillUpdate(nextProps, nextState)
 接收到新的 state props 时触发
 
-### componentWillReceiveProps
+### (不建议)componentWillReceiveProps
 mounted的组件在接收到新的props的时候触发
 
+
+## React为什么要废除一些生命周期
++ `componentWillMount` 服务端会执行可能导致内存泄露，此生命周期里面执行的函数都可以在constructor  
+里面做
++ `componentWillUpdate` `componentWillReceiveProps`都容易写出有副作用的函数，导致复杂性增加出bug
 
 
    
