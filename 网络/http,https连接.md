@@ -1,4 +1,6 @@
+
 ## tcp的3次握手四次挥手
+
 ### 三次握手：
 0.     client              server
 1.              ->                  (server知道client有发送能力)
