@@ -4,9 +4,6 @@
 4. 事件循环
 
 
-### 洗牌算法
-遍历数组的每一个元素，将其与数组中随机的元素进行交换位置。
-
 ### defer async
 + 正常: HTML parsing -> js download -> js execution -> HTML parsing
 + async: HTML parsing

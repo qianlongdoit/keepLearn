@@ -92,7 +92,7 @@ sequenceDiagram
 
 **强缓存：**
 
-+ Expiress: 设置了过期时间，则在规定时间被不会再次请求 `expiress: Wed, 28 Nov 2018 19:43:05 GMT`
++ Expires: 设置了过期时间，则在规定时间被不会再次请求 `expires: Wed, 28 Nov 2018 19:43:05 GMT`
 + Cache-Control: 在这个请求的多少时间内不会再次请求`cache-control: public, max-age=31536000`
   + public：指示想要可以被任何用户缓存，包括CDN、代理商等
   + private：只能被浏览器终端缓存

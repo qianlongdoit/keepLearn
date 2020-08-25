@@ -12,16 +12,16 @@
 `GUI渲染和JS解析线程是互斥的`（因为js可以操作DOM）
 通俗点说就是script脚本执行的时候会阻塞DON树的解析、渲染，延迟DOMContentLoaded事件的触发
 
- 
+
 CSS的加载不会阻塞DOM树的解析
 阻塞DOM树的渲染
 阻塞JS语句执行，影响DOMContentLoaded的触发
 
 ### 执行过程
-执行一次宏观任务，清空所有微观任务
+当同步任务执行栈清空后，执行一次宏观任务，清空所有微观任务
 
-- 执行macro-task
-- 执行micro-task
+- 从宏观任务中取出一个，执行macro-task
+- 执行全部的micro-task队列
 - 执行GUI
 - 执行worker相关任务
 
