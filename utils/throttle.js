@@ -6,9 +6,10 @@ function throttle(fn, delay) {
     let done = false;
     return (...arg) => {
         if (done) return;
+        done = true;
         setTimeout(() => {
             fn.apply(this, arg);
-            done = true;
+            done = false;
         }, delay)
     }
 }
