@@ -17,6 +17,8 @@
 执行于render之前，在该函数里面能做的事情，都可以在constructor里面做。
 服务端的componentWillMount会执行，这样可能导致内存泄露；
 
+在React 16进行React Fiber重写后，此生命周期函数可能会多次调用；
+
 这个周期函数的意义是什么？
 不在此函数里面异步的获取数据是因为，React总是在componentWillMount后执行render。
 这样如果componentWillMount触发的数据不可用，那么render的时候数据也是不可用的，仍然显示的是加载状态。
@@ -74,4 +76,3 @@ mounted的组件在接收到新的props的时候触发
 + `componentWillUpdate` `componentWillReceiveProps`都容易写出有副作用的函数，导致复杂性增加出bug
 
 
-   
