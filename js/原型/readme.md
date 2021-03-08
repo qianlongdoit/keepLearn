@@ -40,3 +40,7 @@ Function.prototype // 打印出来发现和 Object.prototype 很相似
 
 Function.prototype.__proto__ === Object.prototype // true
 ```
+
+
+
+[构造函数、原型、原型链](https://github.com/yygmind/blog/issues/32)
