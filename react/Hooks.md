@@ -35,7 +35,7 @@ Hooks的出现是为了解决这些缺点，因此Hooks的目标是：
 
 <h2>Hooks的使用规则</h2>
 
-1. 只在React函数组件、自定义Hook中中调用Hook
+1. 只在React函数组件、自定义Hook中调用Hook
 2. 不要在条件语句、循环、嵌套函数中调用Hook（确保你在React函数的最顶层调用他们）
 3. `Hook`函数以`use`开头，便于`eslint`做检查
 
