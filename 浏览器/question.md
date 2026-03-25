@@ -5,6 +5,7 @@
 
 
 ### defer async
+重新整理
 + 正常: HTML parsing -> js download -> js execution -> HTML parsing
 + async: HTML parsing
                       -> (once download completed)js execution -> HTML parsing

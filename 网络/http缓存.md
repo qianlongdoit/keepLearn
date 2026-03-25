@@ -42,10 +42,19 @@ ETag也是判断缓存的，只不过是根据内容摘要判断的，流程与 
 
 
 ### Memory Cache
-内存中的缓存，主要包括样式、脚本、图片等。一旦关闭tab页就释放了。读取效率高，但是内存有限。
-使用 preloader 指令，一边解析js/css 一边下载资源，这些也是放在了 memory cache中的
+浏览器会把已经加载过的资源（js/css/img）放到内存里面，下次直接用会显示 from memory catch。
+一旦关闭tab页就释放了。读取效率高，但是内存有限。
+
+使用 preload 指令，一边解析js/css 一边下载资源，这些也是放在了 memory cache中的
 ```html
-<link rel="prefetch" href="/images/big.jpeg">
+<!-- preload 当前页面使用，浏览器不会自动执行js  -->
+<!-- 适用场景：提高首屏加载速度，比如提前加载关键js/css/字体 -->
+<link rel="preload" href="main.js">
+
+<!-- prefetch：未来页面准备。浏览器空闲的时候加载 -->
+<!-- 比如首页里面的详情页，用户可能会点击详情页，这时候可以prefetch。 -->
+<!-- 这样用户点击的时候已经加载了资源可以实现页面秒开 -->
+<link rel="prefetch" href="/images/detail.js">
 ```
 `memory cache`不关心 Cache-Control 的字段值(除非 no-store)，
 对url、Content-Type CORS校验
@@ -56,5 +65,14 @@ ETag也是判断缓存的，只不过是根据内容摘要判断的，流程与 
 
 ### Push Cache
 
+### 相关问题
+1. preload为什么不执行？
+  因为它只是“获取资源提示（fetch hint）”，不是“资源使用指令”。
+  浏览器会做两件事：
+  + 发起请求（高优先级）
+  + 把资源放进缓存（memory / disk cache）
+  这样保证加载和执行的解耦，防止重复执行，执行顺序错误，依赖关系破坏
 
-
+2. prefetch 在弱网下会发生什么？
+  会被浏览器“降级甚至忽略”。浏览器内部的调度器优先级别
+  html > css > js > 图片 > prefetch
