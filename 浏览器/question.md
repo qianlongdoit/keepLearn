@@ -21,7 +21,11 @@
 等待DOM生成，其他脚本执行完成后才开始执行
 多个defer是顺序加载
 
-### window.onload 与 DOMContentLoaded的区别
+### window.onload 与 DOMContentLoaded 的区别
+DOMContentLoaded一般是DOM树解析完成后触发，不会等待图片视频的加载，速度快，用于初始化页面逻辑、事件绑定、依赖DOM尺寸的操作DOM。  
+onload 最晚，资源全部加载完毕了。一般适合用于依赖资源尺寸的计算、瀑布流布局。
+
+
 + 解析HTML结构。
 + 加载外部脚本和样式表文件。
 + 解析并执行脚本代码。//js之类的

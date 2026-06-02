@@ -3,8 +3,9 @@
 客户端再次请求资源的时候，如果命中了缓存资源，会去查看上次缓存的缓存策略，来判断是否读取本地的资源还是  
 和服务器协商缓存。
 
-## 什么时候触发强缓存或者协商缓存？
-强缓存与 expires 和cache-control
+## 什么时候触发强缓存
+浏览器请求资源的时候，如果该资源有强缓存设置，则会读取本地缓存，不会请求
+强缓存通常通过expires 和cache-control的 max-age设置
 
 ### expires
 http1.0中的表示资源过期时间的header，是一个绝对时间，判断对比标准是本地时间。
@@ -15,11 +16,12 @@ http1.1出现，优先级比expires高，是相对时间
 `Cache-Control: max-age=315300000`
 其他字段：
 + Cache-Control: public     所有用户缓存，包括CDN中间代理商  
-+ Cache-Control: private    浏览才可以缓存，其他中继服务器不允许缓存
++ Cache-Control: private    浏览器才可以缓存，其他中继服务器不允许缓存
 + Cache-Control: no-cache   可以缓存在本地，每次命中缓存后，先与服务器通信看看是否过期
 + Cache-Control: no-store   不产生任何缓存
++ Cache-Control: max-age=3600   缓存有效期3600秒
 
-## 缓存协商
+## 协商缓存
 缓存过期或者`Cache-Control: no-cache`的时候，客户端与服务器进行协商缓存。
 如果缓存与服务端最新版本是一致的，那么服务器换返回304 Not Modified，如果过期，则返回200.
 
